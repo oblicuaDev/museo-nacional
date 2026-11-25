@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Claustro de San Agustín — Capas Históricas (Prototipo)</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Cabecera: título + indicador de capa -->
+    <header class="app-header">
+      <div class="app-header__title">
+        <a href="./index.html" class="app-header__home" title="Volver al inicio">
+          <img class="app-header__logo" src="./assets/img/landing/logo.svg" alt="Claustro de San Agustín — Banco de la República / Tunja" />
+        </a>
+        <span class="app-header__subtitle">Capas históricas</span>
+      </div>
+
+      <div class="layer-indicator">
+        <button type="button" class="btn btn--icon" id="btn-prev-layer" aria-label="Capa anterior" title="Capa anterior">
+          ←
+        </button>
+        <span class="layer-indicator__label" id="layer-label" aria-live="polite">
+          <span class="layer-indicator__name" id="layer-name">Capa 1</span>
+          <span class="layer-indicator__period" id="layer-period">Período prehispánico</span>
+        </span>
+        <button type="button" class="btn btn--icon" id="btn-next-layer" aria-label="Capa siguiente" title="Capa siguiente">
+          →
+        </button>
+      </div>
+    </header>
+
+    <!-- Visor principal -->
+    <main class="viewer" id="viewer">
+      <div class="viewer__stage" id="viewer-stage">
+        <!-- Imagen de fondo de la capa activa -->
+        <div class="viewer__bg" id="viewer-bg" aria-hidden="true"></div>
+        <div class="viewer__scrim" aria-hidden="true"></div>
+
+        <!-- Puntos interactivos (hotspots) de la capa activa -->
+        <div id="hotspot-layer" aria-label="Puntos de interés de la capa"></div>
+
+        <!-- Texto introductorio de la capa -->
+        <p class="viewer__intro" id="viewer-intro"></p>
+
+        <!-- Marcador de capa sin contenido aún -->
+        <div class="viewer__placeholder" id="viewer-placeholder" hidden>
+          <div class="viewer__placeholder-box">
+            Contenido en desarrollo para esta capa.<br />
+            Aquí se mostrará la imagen y los puntos de interés cuando estén disponibles.
+          </div>
+        </div>
+      </div>
+
+      <!-- Flechas de navegación sobre el visor -->
+      <button type="button" class="layer-nav layer-nav--prev" id="btn-prev-layer-stage" aria-label="Capa anterior">
+        ‹
+      </button>
+      <button type="button" class="layer-nav layer-nav--next" id="btn-next-layer-stage" aria-label="Capa siguiente">
+        ›
+      </button>
+
+      <!-- Fondo semitransparente al abrir el panel de detalle -->
+      <div class="detail-panel__backdrop" id="detail-backdrop"></div>
+
+      <!-- Panel de detalle del hotspot seleccionado -->
+      <aside class="detail-panel" id="detail-panel" aria-label="Detalle del punto de interés">
+        <div class="detail-panel__header">
+          <div>
+            <p class="detail-panel__eyebrow" id="detail-eyebrow">Capa 1 · Período prehispánico</p>
+            <h2 class="detail-panel__title" id="detail-title">Título</h2>
+          </div>
+          <button type="button" class="btn btn--icon" id="btn-close-detail" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="detail-panel__body">
+          <div class="gallery" id="gallery">
+            <div class="gallery__frame">
+              <img class="gallery__img" id="gallery-img" src="" alt="" />
+              <button type="button" class="gallery__nav gallery__nav--prev" id="btn-gallery-prev" aria-label="Imagen anterior">‹</button>
+              <button type="button" class="gallery__nav gallery__nav--next" id="btn-gallery-next" aria-label="Imagen siguiente">›</button>
+            </div>
+            <p class="gallery__caption" id="gallery-caption"></p>
+            <div class="gallery__dots" id="gallery-dots"></div>
+          </div>
+          <p class="detail-panel__text" id="detail-text"></p>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Pie: menú de épocas para saltar directamente a cualquiera -->
+    <nav class="app-footer era-menu" aria-label="Seleccionar época">
+      <ol class="era-menu__list" id="layer-pips"></ol>
+    </nav>
+  </div>
+
+  <script src="./js/data.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

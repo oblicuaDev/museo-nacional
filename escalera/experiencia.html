@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Claustro de San Agustín — Historias de la escalera (Prototipo)</title>
+  <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+  <div id="app" class="is-menu-screen">
+    <header class="app-header">
+      <a href="./index.html" class="app-header__home" title="Volver al inicio">
+        <img class="app-header__logo" src="./assets/img/logo.svg" alt="Claustro de San Agustín — Banco de la República / Tunja" />
+        <span class="app-header__subtitle">Historias de la escalera</span>
+      </a>
+    </header>
+
+    <main class="app-main">
+      <!-- Pantalla 1: selector de historias -->
+      <section class="screen screen--menu" id="screen-menu">
+        <div class="menu-layout">
+          <!-- Columna visual: cámara/escenario de fondo con marca -->
+          <!-- La escena de la escalera permanece siempre visible (como en el
+               wireframe): al elegir una época solo cambia la capa de video
+               detrás, con fundido; nunca se abre otra pantalla. -->
+          <div class="menu-visual stage" id="stage">
+            <!-- Escalera base (foto fija, mismo encuadre que los videos) -->
+            <div class="stage__simulated" id="stage-simulated"></div>
+            <!-- Capas históricas: un <video> por historia, apilados. -->
+            <div class="stage__layers" id="stage-layers"></div>
+            <div class="menu-visual__shade" aria-hidden="true"></div>
+
+            <div class="menu-visual__top">
+              <a class="menu-visual__brand" href="./index.html" title="Volver al inicio">
+                <img class="menu-visual__logo" src="./assets/img/logo.svg" alt="Claustro de San Agustín — Banco de la República / Tunja" />
+              </a>
+              <span class="stage__tag stage__tag--warning" id="stage-warning" hidden>Video de prototipo · sin transparencia</span>
+            </div>
+
+            <div class="menu-visual__bottom">
+              <h1 class="menu-visual__title">Historias de la escalera</h1>
+              <div class="scene-toggles" id="scene-toggles" hidden>
+                <button type="button" class="scene-toggle" id="btn-toggle-night">Filtro nocturno: apagado</button>
+                <button type="button" class="scene-toggle" id="btn-view-360" hidden>Ver en 360°</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna panel: selección de época (grilla) o detalle de una época -->
+          <div class="menu-panel">
+            <div class="menu-panel__header">
+              <p class="menu-panel__heading">Seleccione la época que quiere conocer</p>
+              <button type="button" class="menu-panel__icon" id="btn-show-grid" aria-label="Ver todas las épocas" title="Ver todas las épocas">☰</button>
+            </div>
+
+            <!-- Vista grilla -->
+            <div class="menu-panel__view" id="panel-grid">
+              <div class="menu-grid" id="menu-grid"></div>
+              <div class="menu-panel__nav">
+                <button type="button" class="menu-panel__arrow" id="btn-selector-prev" aria-label="Resaltar historia anterior">←</button>
+                <button type="button" class="menu-panel__arrow" id="btn-selector-next" aria-label="Resaltar historia siguiente">→</button>
+              </div>
+            </div>
+
+            <!-- Vista detalle: el mismo panel, sin salir de la escena -->
+            <div class="menu-panel__view epoch-detail" id="panel-detail" hidden>
+              <div class="epoch-detail__doc">
+                <button type="button" class="menu-panel__arrow" id="btn-stage-prev" aria-label="Época anterior">←</button>
+                <img class="epoch-detail__img" id="info-img" src="" alt="" />
+                <button type="button" class="menu-panel__arrow" id="btn-stage-next" aria-label="Época siguiente">→</button>
+              </div>
+              <h2 class="epoch-detail__title" id="info-title">—</h2>
+              <p class="epoch-detail__eyebrow" id="info-doc"></p>
+              <div class="epoch-detail__scroll">
+                <p class="epoch-detail__text" id="info-text"></p>
+              </div>
+              <p class="epoch-detail__indicator" id="stage-indicator"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Vista 360 (prototipo estático) -->
+      <div class="view-360" id="view-360" hidden>
+        <img class="view-360__img" id="view-360-img" src="" alt="Vista 360 grados" />
+        <p class="view-360__note">Vista 360° — prototipo estático, pendiente integrar visor 360 real.</p>
+        <button type="button" class="btn btn--icon view-360__close" id="btn-close-360" aria-label="Cerrar vista 360">✕</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="./js/data.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

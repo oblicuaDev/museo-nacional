@@ -1,0 +1,11 @@
+# Paquetes de entrega (el repo reemplaza el envío por ZIP)
+*.zip
+
+# Herramientas locales
+.taste-skill/
+node_modules/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini

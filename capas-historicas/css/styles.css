@@ -1,0 +1,541 @@
+/* Prototipo funcional — Capas históricas del Claustro San Agustín.
+   Estilo deliberadamente simple (wireframe): sin diseño visual definitivo.
+   Preparado para que el diseño final reemplace colores, tipografía y componentes. */
+
+:root {
+  --color-bg: #f4f3ef;
+  --color-surface: #ffffff;
+  --color-border: #c9c5bd;
+  --color-text: #222222;
+  --color-text-muted: #666666;
+  --color-accent: #8a6d3b;
+  --color-placeholder: #e4e1da;
+
+  --dot-red: #d64545;
+  --dot-aqua: #3bb6b0;
+  --dot-orange: #e08a2b;
+  --dot-yellow: #e0c92b;
+  --dot-magenta: #c2459b;
+  --dot-violet: #8a4fd6;
+  --dot-green: #4fae5a;
+  --dot-teal: #2b8e9e;
+
+  --panel-width: 420px;
+  --header-height: 72px;
+  --footer-height: 56px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Garantiza que [hidden] siempre oculte, incluso sobre reglas con display
+   explícito que de otro modo empatarían en especificidad. */
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Header ---------- */
+
+.app-header {
+  height: var(--header-height);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 20;
+}
+
+.app-header__title {
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+}
+
+.app-header__home {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-header__home:hover {
+  text-decoration: underline;
+}
+
+.app-header__subtitle {
+  display: block;
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--color-text-muted);
+}
+
+.layer-indicator {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.layer-indicator__label {
+  min-width: 190px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.layer-indicator__name {
+  display: block;
+  font-weight: bold;
+}
+
+.layer-indicator__period {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 11px;
+}
+
+/* ---------- Botones genéricos (estilo wireframe) ---------- */
+
+.btn {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.btn:hover {
+  background: #eeece6;
+}
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.btn--icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 50%;
+}
+
+/* ---------- Visor principal ---------- */
+
+.viewer {
+  position: relative;
+  flex: 1 1 auto;
+  overflow: hidden;
+  background: #111;
+}
+
+.viewer__stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewer__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 400ms ease;
+}
+
+.viewer__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 0.45) 100%);
+  pointer-events: none;
+}
+
+.viewer__intro {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.viewer__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-placeholder),
+    var(--color-placeholder) 12px,
+    #d8d4ca 12px,
+    #d8d4ca 24px
+  );
+}
+
+.viewer__placeholder[hidden] {
+  display: none;
+}
+
+.viewer__placeholder-box {
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: 4px;
+  padding: 24px 32px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Hotspots ---------- */
+
+.hotspot {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
+  margin-top: -13px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+  animation: hotspot-pulse 2.4s ease-in-out infinite;
+}
+
+.hotspot:hover,
+.hotspot:focus-visible {
+  transform: scale(1.2);
+  outline: none;
+}
+
+.hotspot[data-color="red"] {
+  background: var(--dot-red);
+}
+.hotspot[data-color="aqua"] {
+  background: var(--dot-aqua);
+}
+.hotspot[data-color="orange"] {
+  background: var(--dot-orange);
+}
+.hotspot[data-color="yellow"] {
+  background: var(--dot-yellow);
+}
+.hotspot[data-color="magenta"] {
+  background: var(--dot-magenta);
+}
+.hotspot[data-color="violet"] {
+  background: var(--dot-violet);
+}
+.hotspot[data-color="green"] {
+  background: var(--dot-green);
+}
+.hotspot[data-color="teal"] {
+  background: var(--dot-teal);
+}
+
+.hotspot.is-active {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+@keyframes hotspot-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* ---------- Navegación de capas (triángulos) ---------- */
+
+.layer-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  z-index: 15;
+}
+
+.layer-nav:hover {
+  background: #fff;
+}
+
+.layer-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.layer-nav--prev {
+  left: 18px;
+}
+
+.layer-nav--next {
+  right: 18px;
+}
+
+/* ---------- Footer: indicador de capas (pips) ---------- */
+
+.app-footer {
+  height: var(--footer-height);
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  z-index: 20;
+}
+
+/* ---------- Panel de detalle (hotspot) ---------- */
+
+.detail-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: var(--panel-width);
+  max-width: 92vw;
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 300ms ease;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-panel.is-open {
+  transform: translateX(0);
+}
+
+.detail-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detail-panel__eyebrow {
+  margin: 0 0 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.detail-panel__title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.detail-panel__body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.detail-panel__text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.gallery {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.gallery__frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #eee;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gallery__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery__caption {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.gallery__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+.gallery__nav--prev {
+  left: 8px;
+}
+
+.gallery__nav--next {
+  right: 8px;
+}
+
+.gallery__dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.gallery__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+}
+
+.gallery__dot.is-current {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.detail-panel__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 25;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.detail-panel__backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 720px) {
+  .app-header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .layer-indicator__label {
+    min-width: 0;
+  }
+
+  .viewer__intro {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    max-width: none;
+  }
+
+  :root {
+    --panel-width: 100%;
+  }
+}
+
+/* ---------- Unificación visual (sistema Claustro San Agustín) ---------- */
+body, button, input { font-family: Inter, Arial, sans-serif; }
+.app-header__title, .app-header__home, .layer-indicator__name, .detail-panel__title, .screen h1, .screen h2 { font-family: Fraunces, Georgia, serif; }
+.app-header { background: #fff; border-bottom: 1px solid #e3dfd6; }
+.app-header__title { font-size: 18px; font-weight: 600; }
+.app-header__subtitle { color: #52606d; font-size: 12px; }
+.btn { font-size: 14px; font-weight: 600; min-height: 44px; padding: 10px 18px; border-radius: 12px; border-color: #c9c5bd; background: #fff; color: #171412; }
+.btn:hover { background: #f4f3ef; }
+.btn:focus-visible { outline: 3px solid #2d7a89; outline-offset: 2px; }
+.btn--icon { width: 44px; height: 44px; border-radius: 12px; }
+.layer-nav { width: 52px; height: 52px; border-color: transparent; background: rgba(255,255,255,.94); box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.layer-nav:hover { background: #fff; }
+.viewer__intro { border-radius: 16px; border-color: transparent; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+.detail-panel { box-shadow: -12px 0 40px rgba(0,0,0,.18); }
+.detail-panel__eyebrow { color: #8a6d3b; font-weight: 600; letter-spacing: .1em; }
+.app-footer { background: #fff; border-top: 1px solid #e3dfd6; }
+
+/* Logo oficial (SVG blanco) invertido a oscuro sobre la barra clara */
+.app-header__title { display: flex; align-items: center; gap: 16px; }
+.app-header__home { display: block; }
+.app-header__logo { display: block; height: 40px; width: auto; filter: invert(1) brightness(0.15); }
+
+/* ---------- Menú de épocas (pie) ---------- */
+.era-menu { height: auto; min-height: var(--footer-height); padding: 8px 16px; justify-content: center; }
+.era-menu__list { list-style: none; margin: 0; padding: 0; display: flex; gap: 8px; max-width: 100%; overflow-x: auto; scrollbar-width: thin; }
+.era-tab { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 16px 6px 8px; border: 1px solid #e3dfd6; border-radius: 999px; background: #fff; color: #171412; font-family: inherit; text-align: left; cursor: pointer; white-space: nowrap; transition: background 150ms ease, border-color 150ms ease; }
+.era-tab:hover { background: #f4f3ef; }
+.era-tab:focus-visible { outline: 3px solid #2d7a89; outline-offset: 2px; }
+.era-tab__num { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #f4f3ef; font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 15px; }
+.era-tab__text { display: flex; flex-direction: column; line-height: 1.25; }
+.era-tab__name { font-size: 13px; font-weight: 600; }
+.era-tab__years { font-size: 11px; color: #52606d; }
+.era-tab.is-current { background: #171412; border-color: #171412; color: #fff; }
+.era-tab.is-current .era-tab__num { background: #8a6d3b; color: #fff; }
+.era-tab.is-current .era-tab__years { color: rgba(255,255,255,.7); }
+@media (max-width: 860px) { .era-menu { justify-content: flex-start; } .era-tab__years { display: none; } }
+.hotspot { width: 30px; height: 30px; margin-left: -15px; margin-top: -15px; border: 3px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+.hotspot:focus-visible { outline: 3px solid #2d7a89; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .hotspot, .detail-panel, .viewer__bg { animation: none !important; transition: none !important; } }

@@ -1,0 +1,634 @@
+/* Prototipo funcional — Historias de la escalera del Claustro San Agustín.
+   Estilo deliberadamente simple (wireframe): sin diseño visual definitivo.
+   Preparado para que el diseño final reemplace colores, tipografía y componentes. */
+
+:root {
+  --color-bg: #f4f3ef;
+  --color-surface: #ffffff;
+  --color-border: #c9c5bd;
+  --color-text: #222222;
+  --color-text-muted: #666666;
+  --color-accent: #8a6d3b;
+  --color-warning: #8a4b2b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Garantiza que [hidden] siempre oculte, incluso sobre reglas con display
+   explícito (p. ej. .screen, .view-360) que de otro modo empatarían en
+   especificidad con la hoja de estilos del navegador. */
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* En la pantalla de selección, la identidad ya va superpuesta a la foto
+   (menu-visual__brand), así que se oculta la barra genérica para evitar
+   duplicar marca, igual que en la referencia del cliente. */
+#app.is-menu-screen .app-header {
+  display: none;
+}
+
+/* ---------- Header ---------- */
+
+.app-header {
+  flex: 0 0 auto;
+  padding: 14px 20px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.app-header__home {
+  font-size: 16px;
+  font-weight: bold;
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-header__home {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* El SVG oficial es blanco; en la barra clara se invierte para que se lea. */
+.app-header__logo {
+  display: block;
+  height: 40px;
+  width: auto;
+  filter: invert(1) brightness(0.15);
+}
+
+.app-header__home:hover {
+  text-decoration: underline;
+}
+
+.app-header__subtitle {
+  display: block;
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Botones genéricos ---------- */
+
+.btn {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 8px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.btn:hover {
+  background: #eeece6;
+}
+
+.btn--icon {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.btn--primary {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+  font-weight: bold;
+  padding: 10px 20px;
+}
+
+.btn--primary:hover {
+  opacity: 0.9;
+  background: var(--color-accent);
+}
+
+.btn--toggle {
+  font-size: 12px;
+}
+
+.btn--toggle.is-on {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+
+/* ---------- Layout principal ---------- */
+
+.app-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.screen {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Pantalla 1: selector de historias (grilla de épocas) ---------- */
+
+.screen--menu {
+  margin: -24px;
+}
+
+.menu-layout {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+}
+
+/* Columna de la escena: siempre visible. Capas de abajo hacia arriba:
+   cámara/foto base → videos de época → degradado → marca y controles. */
+.menu-visual {
+  position: relative;
+  flex: 1.4 1 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #111;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px 32px;
+}
+
+.menu-visual__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(23, 20, 18, 0.75) 0%,
+    rgba(23, 20, 18, 0.15) 30%,
+    rgba(23, 20, 18, 0.55) 100%
+  );
+}
+
+.menu-visual__top,
+.menu-visual__bottom {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.menu-visual__top {
+  align-items: flex-start;
+}
+
+.menu-visual__bottom {
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.menu-visual__brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  text-decoration: none;
+}
+
+/* Logo oficial (sello + "Claustro de San Agustín / Banco de la República /
+   Tunja" ya vienen dentro del SVG): tamaño legible, sin texto duplicado. */
+.menu-visual__logo {
+  display: block;
+  height: clamp(44px, 5vw, 60px);
+  width: auto;
+}
+
+.menu-visual__brandtext {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.menu-visual__brandtext small {
+  display: block;
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.menu-visual__title {
+  position: relative;
+  margin: 0;
+  color: #fff;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: 34px;
+}
+
+.menu-panel {
+  flex: 1 1 0;
+  background: var(--color-ink, #171412);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  min-width: 320px;
+  overflow-y: auto;
+}
+
+.menu-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.menu-panel__heading {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.menu-panel__icon {
+  background: transparent;
+  border: none;
+  color: #fff;
+  opacity: 0.7;
+  font-size: 18px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.menu-panel__icon:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.menu-panel__view {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---- Detalle de época (mismo panel, sin cambiar de pantalla) ---- */
+
+.epoch-detail__doc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.epoch-detail__doc .menu-panel__arrow {
+  flex: 0 0 auto;
+}
+
+.epoch-detail__img {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  max-height: 46vh;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+  animation: epoch-in 300ms ease;
+}
+
+.epoch-detail__title {
+  margin: 20px 0 4px;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: 22px;
+  text-align: center;
+  color: #fff;
+}
+
+.epoch-detail__eyebrow {
+  margin: 0 0 16px;
+  font-size: 12px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.epoch-detail__scroll {
+  flex: 1 1 auto;
+  min-height: 80px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.epoch-detail__text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.epoch-detail__indicator {
+  margin: 14px 0 0;
+  font-size: 12px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes epoch-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Controles de la escena: discretos, sobre la foto ---- */
+
+.scene-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.scene-toggle {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(23, 20, 18, 0.55);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.scene-toggle:hover {
+  background: rgba(23, 20, 18, 0.8);
+}
+
+.scene-toggle.is-on {
+  background: #8a6d3b;
+  border-color: #8a6d3b;
+}
+
+.scene-toggle:focus-visible,
+.menu-panel__arrow:focus-visible,
+.menu-panel__icon:focus-visible {
+  outline: 3px solid #4c9baa;
+  outline-offset: 2px;
+}
+
+.menu-grid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  align-content: start;
+}
+
+.menu-card {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-family: inherit;
+  color: #fff;
+}
+
+.menu-card__thumb {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.menu-card:hover .menu-card__thumb,
+.menu-card.is-highlighted .menu-card__thumb {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(45, 122, 137, 0.45);
+  border-color: #4c9baa;
+}
+
+.menu-card:focus-visible .menu-card__thumb {
+  outline: 3px solid #4c9baa;
+  outline-offset: 2px;
+}
+
+.menu-card__label {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.menu-panel__nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.menu-panel__arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.menu-panel__arrow:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 860px) {
+  .menu-layout {
+    flex-direction: column;
+  }
+
+  .menu-visual {
+    min-height: 220px;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---------- Escena: cámara + capas de época (dentro de .menu-visual) ---------- */
+
+.stage__simulated {
+  background-image: url("../assets/img/scenario-base.jpg");
+}
+
+.stage__video,
+.stage__simulated {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+  transition: filter 250ms ease;
+}
+
+/* Capas de video: escena completa (sin canal alfa), apiladas; solo la activa
+   es visible. El fundido dura lo mismo que LAYER_FADE_MS en app.js. */
+.stage__layers {
+  position: absolute;
+  inset: 0;
+}
+
+.stage__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #111;
+  opacity: 0;
+  transition: filter 250ms ease, opacity 600ms ease;
+}
+
+.stage__layer.is-active {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage__layer {
+    transition: none;
+  }
+}
+
+.stage.is-night .stage__video,
+.stage.is-night .stage__simulated,
+.stage.is-night .stage__layer {
+  filter: brightness(0.45) contrast(1.3) saturate(0.55) hue-rotate(190deg);
+}
+
+.stage__tag {
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.stage__tag--warning {
+  background: rgba(138, 75, 43, 0.85);
+}
+
+/* ---------- Vista 360 (prototipo estático) ---------- */
+
+.view-360 {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-360__img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+}
+
+.view-360__note {
+  color: #fff;
+  font-size: 12px;
+  margin-top: 12px;
+  opacity: 0.8;
+}
+
+.view-360__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 860px) {
+  .menu-visual {
+    min-height: 52vh;
+    padding: 20px 16px;
+  }
+
+  .menu-panel {
+    min-width: 0;
+    padding: 24px 16px;
+  }
+
+  .menu-visual__title {
+    font-size: 26px;
+  }
+
+  .menu-visual__top {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .epoch-detail__img {
+    max-height: 38vh;
+  }
+}
+
+/* ---------- Unificación visual (sistema Claustro San Agustín) ---------- */
+body, button, input { font-family: Inter, Arial, sans-serif; }
+.app-header__title, .app-header__home, .layer-indicator__name, .detail-panel__title, .screen h1, .screen h2 { font-family: Fraunces, Georgia, serif; }
+.app-header { background: #fff; border-bottom: 1px solid #e3dfd6; }
+.app-header__title { font-size: 18px; font-weight: 600; }
+.app-header__subtitle { color: #52606d; font-size: 12px; }
+.btn { font-size: 14px; font-weight: 600; min-height: 44px; padding: 10px 18px; border-radius: 12px; border-color: #c9c5bd; background: #fff; color: #171412; }
+.btn:hover { background: #f4f3ef; }
+.btn:focus-visible { outline: 3px solid #2d7a89; outline-offset: 2px; }
+.btn--icon { width: 44px; height: 44px; border-radius: 12px; }
+.layer-nav { width: 52px; height: 52px; border-color: transparent; background: rgba(255,255,255,.94); box-shadow: 0 6px 18px rgba(0,0,0,.18); }
+.layer-nav:hover { background: #fff; }
+.viewer__intro { border-radius: 16px; border-color: transparent; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+.detail-panel { box-shadow: -12px 0 40px rgba(0,0,0,.18); }
+.detail-panel__eyebrow { color: #8a6d3b; font-weight: 600; letter-spacing: .1em; }
+.app-footer { background: #fff; border-top: 1px solid #e3dfd6; }
+.layer-pip { width: 12px; height: 12px; border-color: #c9c5bd; }
+.layer-pip.is-current { background: #8a6d3b; border-color: #8a6d3b; transform: scale(1.2); }
+.hotspot { width: 30px; height: 30px; margin-left: -15px; margin-top: -15px; border: 3px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+.hotspot:focus-visible { outline: 3px solid #2d7a89; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .hotspot, .detail-panel, .viewer__bg { animation: none !important; transition: none !important; } }
