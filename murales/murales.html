@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Claustro de San Agustín — Visor Interactivo de Murales</title>
+  <link rel="stylesheet" href="./css/variables.css" />
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/navigation.css" />
+  <link rel="stylesheet" href="./css/viewer.css" />
+</head>
+<body>
+  <div class="app-shell" id="app-shell">
+    <!-- Lienzo principal a pantalla completa -->
+    <main class="viewer-shell" id="viewer-shell">
+      <section
+        class="viewer-viewport"
+        id="viewer-viewport"
+        tabindex="0"
+        aria-label="Visor interactivo del mural"
+      >
+        <!-- Escenario transformable (pan + zoom) -->
+        <div class="viewer-stage" id="viewer-stage">
+          <div class="mural-canvas" id="mural-canvas">
+            <div class="mural-fragments" id="mural-fragments">
+              <!-- Fragmentos unidos sin espacios -->
+            </div>
+
+            <!-- Capa de oscurecimiento / detalle spotlight (Fase 3) -->
+            <div class="mural-spotlight" id="mural-spotlight" aria-hidden="true"></div>
+
+            <!-- Capa de puntos interactivos en porcentajes (Fase 3) -->
+            <div
+              class="mural-hotspots"
+              id="mural-hotspots"
+              aria-label="Puntos de interés del mural"
+            ></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gradiente superior sutil para legibilidad de la cabecera sobre el mural -->
+      <div class="viewer-top-scrim" aria-hidden="true"></div>
+
+      <!-- Cabecera flotante inspirada en la captura de referencia -->
+      <header class="app-header" aria-label="Información y navegación del claustro">
+        <!-- Identidad institucional (arriba izquierda) -->
+        <div class="brand">
+          <a href="../index.html" title="Volver al listado de prototipos">
+            <img
+              src="./assets/img/logo-claustro.svg"
+              alt="Claustro de San Agustín"
+              class="brand__logo"
+              width="156"
+              height="34"
+            />
+          </a>
+          <span class="brand__institution">Banco de la República / Tunja</span>
+        </div>
+
+        <!-- Títulos editoriales centrados (arriba centro) -->
+        <div class="mural-heading">
+          <p class="mural-heading__eyebrow" id="mural-eyebrow">
+            Narrativas digitales / mural
+          </p>
+          <p class="mural-heading__subtitle">
+            Conozca los hermosos murales del Claustro de San Agustín
+          </p>
+          <h1 class="mural-heading__title" id="mural-title">Cargando mural…</h1>
+          <p class="mural-heading__date" id="mural-date" hidden></p>
+        </div>
+
+        <!-- Controles compactos de piso y recorrido (arriba derecha) -->
+        <div class="header-controls">
+          <div
+            class="floor-switcher"
+            id="floor-switcher"
+            role="group"
+            aria-label="Seleccionar piso"
+          >
+            <!-- Botones Piso 1 / Piso 2 -->
+          </div>
+
+          <div class="quick-nav-bar">
+            <span class="location-indicator" id="location-indicator" aria-live="polite">
+              Piso 1 &gt; Muro 1 de 3
+            </span>
+            <nav class="quick-nav" aria-label="Navegación secuencial de muros">
+              <button
+                type="button"
+                class="btn btn--glass btn--sm"
+                id="btn-prev-mural"
+                aria-label="Muro anterior"
+                title="Muro anterior"
+              >
+                ← Anterior
+              </button>
+              <button
+                type="button"
+                class="btn btn--glass btn--sm"
+                id="btn-next-mural"
+                aria-label="Muro siguiente"
+                title="Muro siguiente"
+              >
+                Siguiente →
+              </button>
+            </nav>
+          </div>
+        </div>
+      </header>
+
+      <!-- Insignia de modo desarrollo (tecla D o ?dev=1) -->
+      <div class="dev-badge" id="dev-badge" hidden role="status" aria-live="polite">
+        Modo Dev · Haz clic en el mural para registrar coordenadas (x%, y%) en consola
+      </div>
+
+      <!-- Controles de zoom y ayuda de teclado (abajo izquierda) -->
+      <div class="viewer-hud-bottom">
+        <div
+          class="viewer-controls"
+          id="viewer-controls"
+          role="toolbar"
+          aria-label="Controles de visualización"
+        >
+          <button
+            type="button"
+            class="btn btn--glass btn--icon"
+            id="btn-zoom-out"
+            aria-label="Alejar"
+            title="Alejar (−)"
+          >
+            −
+          </button>
+          <span class="viewer-controls__zoom-readout" id="zoom-readout" aria-live="polite">
+            100%
+          </span>
+          <button
+            type="button"
+            class="btn btn--glass btn--icon"
+            id="btn-zoom-in"
+            aria-label="Acercar"
+            title="Acercar (+)"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            class="btn btn--glass btn--sm"
+            id="btn-zoom-reset"
+            title="Restablecer vista (0)"
+          >
+            Restablecer
+          </button>
+        </div>
+
+        <p class="viewer-hint" id="mural-summary"></p>
+      </div>
+
+      <!-- Pestaña lateral derecha para abrir el plano interactivo -->
+      <button
+        type="button"
+        class="plan-edge-trigger"
+        id="btn-toggle-plan"
+        aria-expanded="false"
+        aria-controls="plan-drawer"
+      >
+        <span class="plan-edge-trigger__icon" aria-hidden="true">◫</span>
+        <span class="plan-edge-trigger__label">Conozca otros murales del claustro</span>
+      </button>
+
+      <!-- Fondo semitransparente al abrir el panel del plano -->
+      <div class="plan-backdrop" id="plan-backdrop" hidden aria-hidden="true"></div>
+
+      <!-- Panel desplegable lateral del plano esquemático interactivo -->
+      <section
+        class="plan-drawer"
+        id="plan-drawer"
+        aria-label="Conozca otros murales del claustro"
+        hidden
+      >
+        <div class="plan-drawer__header">
+          <div class="plan-drawer__titles">
+            <h2 class="plan-drawer__title">Conozca otros murales del claustro</h2>
+            <p class="plan-drawer__subtitle" id="plan-drawer-subtitle">
+              Seleccione un punto sobre el plano para explorar cada muro.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="btn btn--surface btn--icon"
+            id="btn-close-plan"
+            aria-label="Cerrar panel de planos"
+            title="Cerrar (Escape)"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Alternador interno entre Piso 1 y Piso 2 sin cerrar el panel -->
+        <div class="plan-drawer__floor-bar">
+          <div
+            class="plan-floor-toggle"
+            id="plan-floor-toggle"
+            role="group"
+            aria-label="Alternar plano entre Piso 1 y Piso 2"
+          >
+            <button
+              type="button"
+              class="btn btn--surface btn--sm"
+              id="btn-plan-prev-floor"
+              aria-label="Ver plano del piso anterior"
+              title="Piso anterior"
+            >
+              ←
+            </button>
+            <div class="plan-floor-toggle__pills" id="plan-floor-pills">
+              <!-- Botones Piso 1 / Piso 2 -->
+            </div>
+            <button
+              type="button"
+              class="btn btn--surface btn--sm"
+              id="btn-plan-next-floor"
+              aria-label="Ver plano del piso siguiente"
+              title="Piso siguiente"
+            >
+              →
+            </button>
+          </div>
+          <span class="plan-drawer__floor-desc" id="plan-floor-desc"></span>
+        </div>
+
+        <div class="plan-drawer__body">
+          <div class="plan-stage" id="plan-stage">
+            <!-- Plano real o SVG fallback + pines interactivos en (x%, y%) -->
+          </div>
+
+          <div class="plan-legend-wrap">
+            <h3 class="plan-legend__heading" id="plan-legend-heading">Murales en este piso</h3>
+            <ul class="plan-legend" id="plan-legend" aria-label="Lista de murales del piso">
+              <!-- Lista sincronizada con los pines del plano -->
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel informativo de hotspot / narrativa (Fase 3) -->
+      <aside
+        class="narrative-panel"
+        id="narrative-panel"
+        aria-label="Detalle del punto de interés"
+        hidden
+      >
+        <div class="narrative-panel__header">
+          <div>
+            <p class="narrative-panel__eyebrow" id="narrative-subtitle"></p>
+            <h2 class="narrative-panel__title" id="narrative-title"></h2>
+          </div>
+          <button
+            type="button"
+            class="btn btn--glass btn--icon"
+            id="btn-close-narrative"
+            aria-label="Cerrar detalle y volver a la vista general"
+            title="Cerrar y volver a vista general (Escape)"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="narrative-panel__body" id="narrative-body"></div>
+        <div class="narrative-panel__footer" id="narrative-footer">
+          <span class="narrative-panel__counter" id="narrative-counter"></span>
+          <div class="narrative-panel__nav">
+            <button
+              type="button"
+              class="btn btn--glass btn--sm"
+              id="btn-prev-hotspot"
+              aria-label="Punto anterior"
+            >
+              ← Anterior
+            </button>
+            <button
+              type="button"
+              class="btn btn--glass btn--sm"
+              id="btn-next-hotspot"
+              aria-label="Siguiente punto"
+            >
+              Siguiente →
+            </button>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

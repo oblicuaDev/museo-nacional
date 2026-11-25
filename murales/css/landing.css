@@ -1,0 +1,149 @@
+/* Página de inicio (Landing) — intro y explicación para el usuario.
+   Mismo patrón usado en capas-historicas y escalera. */
+
+:root {
+  --color-accent: #8a6d3b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #222;
+}
+
+.landing {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 32px 20px;
+}
+
+.landing__hero {
+  position: absolute;
+  inset: 0;
+  background-image: url("../assets/img/ciudad-de-dios/completo.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.landing__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 10, 10, 0.55) 0%,
+    rgba(10, 10, 10, 0.35) 35%,
+    rgba(10, 10, 10, 0.8) 100%
+  );
+}
+
+.landing__logo-link {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 2;
+  display: inline-block;
+}
+
+.landing__logo {
+  display: block;
+  height: 60px;
+}
+
+.landing__content {
+  position: relative;
+  z-index: 2;
+  max-width: 640px;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+}
+
+.landing__eyebrow {
+  margin: 0 0 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #e7e2d6;
+}
+
+.landing__title {
+  margin: 0 0 18px;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.landing__text {
+  margin: 0 auto 32px;
+  max-width: 520px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #f1efe9;
+}
+
+.landing__instructions {
+  list-style: none;
+  margin: 0 0 36px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.instruction {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  padding: 18px 12px;
+}
+
+.instruction__icon {
+  height: 36px;
+  margin-bottom: 10px;
+  filter: brightness(0) invert(1);
+}
+
+.instruction__text {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #fff;
+}
+
+.btn--cta {
+  display: inline-block;
+  padding: 14px 32px;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  background: #fff;
+  color: #222;
+  border-radius: 3px;
+  border: 1px solid #fff;
+}
+
+.btn--cta:hover {
+  background: transparent;
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .landing__title {
+    font-size: 28px;
+  }
+
+  .landing__instructions {
+    grid-template-columns: 1fr;
+  }
+}

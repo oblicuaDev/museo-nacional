@@ -58,7 +58,7 @@ body {
 
 .landing__logo {
   display: block;
-  height: clamp(40px, 4.5vw, 56px);
+  height: clamp(40px, 4.5vw, 60px);
   width: auto;
 }
 
