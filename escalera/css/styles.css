@@ -165,7 +165,7 @@ body {
    cámara/foto base → videos de época → degradado → marca y controles. */
 .menu-visual {
   position: relative;
-  flex: 1.4 1 0;
+  flex: 1 1 0;
   min-height: 100vh;
   overflow: hidden;
   background-color: #111;
@@ -246,13 +246,13 @@ body {
 }
 
 .menu-panel {
-  flex: 1 1 0;
+  flex: 0 0 clamp(300px, 26vw, 400px);
   background: var(--color-ink, #171412);
   color: #fff;
   display: flex;
   flex-direction: column;
-  padding: 32px;
-  min-width: 320px;
+  padding: 28px 24px;
+  min-width: 0;
   overflow-y: auto;
 }
 
@@ -310,8 +310,8 @@ body {
 .epoch-detail__img {
   display: block;
   width: 100%;
-  max-width: 340px;
-  max-height: 46vh;
+  max-width: 220px;
+  max-height: 36vh;
   aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 10px;
@@ -404,7 +404,7 @@ body {
   flex: 1 1 auto;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 16px;
   align-content: start;
 }
 
@@ -446,7 +446,7 @@ body {
 .menu-card__label {
   font-family: "Fraunces", Georgia, serif;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
   text-align: center;
   line-height: 1.3;
 }
@@ -593,7 +593,7 @@ body {
   }
 
   .menu-panel {
-    min-width: 0;
+    flex: 1 1 auto;
     padding: 24px 16px;
   }
 
